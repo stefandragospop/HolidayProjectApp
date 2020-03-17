@@ -4,6 +4,11 @@
 @{
     ViewData["Title"] = "Log in";
 }
+@using Microsoft.AspNetCore.Identity
+@using Holiday.Web.Models
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 <h1>@ViewData["Title"]</h1>
 <div class="row">

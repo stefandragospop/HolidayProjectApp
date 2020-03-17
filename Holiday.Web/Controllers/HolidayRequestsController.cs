@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Holiday.Web.Data;
 using Holiday.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using Holiday.Web.ViewModels;
+using Holiday.Web.Services;
 
 namespace Holiday.Web.Controllers
 {
@@ -23,30 +25,11 @@ namespace Holiday.Web.Controllers
         // GET: HolidayRequests
         public async Task<IActionResult> Index()
         {
-            return View(await _context.HolidayRequests.Where(x=>x.Employee.Email == User.Identity.Name).ToListAsync());
+            var holidays = await _context.HolidayRequests.Include(x => x.Employee).Where(x => x.Employee.Email == User.Identity.Name).ToListAsync();
+            
+            return View(HolidayRequestService.GetHolidayViewModel(holidays));
         }
 
-        // GET: HolidayRequests/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var holidayRequest = await _context.HolidayRequests.Include(x => x.Employee).Include(x=>x.Approver).Where(x => x.HolidayRequestId == id).FirstOrDefaultAsync();
-            if (holidayRequest.Employee.UserName != User.Identity.Name)
-            {
-                return Unauthorized();
-            }
-
-            if (holidayRequest == null)
-            {
-                return NotFound();
-            }
-
-            return View(holidayRequest);
-        }
 
         // GET: HolidayRequests/Create
         public IActionResult Create()
@@ -81,8 +64,8 @@ namespace Holiday.Web.Controllers
                 return NotFound();
             }
 
-            var holidayRequest = await _context.HolidayRequests.Include(x=>x.Employee).Where(x=>x.HolidayRequestId == id).FirstOrDefaultAsync();
-            if(holidayRequest.Employee.UserName != User.Identity.Name)
+            var holidayRequest = await _context.HolidayRequests.Include(x => x.Employee).Where(x => x.HolidayRequestId == id).FirstOrDefaultAsync();
+            if (holidayRequest.Employee.UserName != User.Identity.Name)
             {
                 return Unauthorized();
             }
@@ -104,13 +87,14 @@ namespace Holiday.Web.Controllers
             {
                 return NotFound();
             }
-            
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     holidayRequest.Employee = _context.Users.FirstOrDefault(x => x.UserName == User.Identity.Name);
                     holidayRequest.Status = Constants.Status.Pending;
+                    holidayRequest.ModifiedDate = DateTime.Now;
                     _context.Update(holidayRequest);
                     await _context.SaveChangesAsync();
                 }
@@ -138,7 +122,7 @@ namespace Holiday.Web.Controllers
                 return NotFound();
             }
 
-            var holidayRequest = await _context.HolidayRequests.Include(x => x.Employee).Include(x=>x.Approver).Where(x => x.HolidayRequestId == id).FirstOrDefaultAsync();
+            var holidayRequest = await _context.HolidayRequests.Include(x => x.Employee).Include(x => x.Approver).Where(x => x.HolidayRequestId == id).FirstOrDefaultAsync();
             if (holidayRequest.Employee.UserName != User.Identity.Name)
             {
                 return Unauthorized();

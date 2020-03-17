@@ -1,59 +1,101 @@
-﻿@model IEnumerable<Holiday.Web.Models.HolidayRequest>
+﻿@model Holiday.Web.ViewModels.HolidayPageViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "My Holidays";
 }
+<div class="row">
+    <h5>My Holidays</h5>
+    <a class="pad-left-10 color-dark" asp-action="Create" data-toggle="tooltip" title="Create"><i class="fas fa-plus-circle"></i></a>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-3">
+        @Html.DisplayNameFor(model => model.EmloyeeFullName): <b>@Html.DisplayFor(model => model.EmloyeeFullName)</b>
+    </div>
+    <div class="col-sm-3 text-center">
+        @Html.DisplayNameFor(model => model.EmployeeTotalNoOfDays):<b> @Html.DisplayFor(model => model.EmployeeTotalNoOfDays)</b>
+    </div>
+    <div class="col-sm-3 text-center">
+        @if (Model.EmployeeTotalDaysLeft > 0)
+        {
+            @Html.DisplayNameFor(model => model.EmployeeTotalDaysLeft)<text>:</text><b> @Html.DisplayFor(model => model.EmployeeTotalDaysLeft)</b>
+        }
+        else
+        {
+            @Html.DisplayNameFor(model => model.EmployeeTotalDaysLeft)<text>:</text><b> 0</b>
+        }
+    </div>
+    @if (Model.EmployeeTotalDaysLeft < 0)
+    {
+        <div class="col-sm-3 text-center">
 
-<h1>My Holidays</h1>
+            <text>Days In Advance: </text><b>@(Model.EmployeeTotalDaysLeft * -1)</b>
+        </div>
+    }
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<br />
+
+<table class="table table-hover">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.StartDate)
+                @Html.DisplayNameFor(model => model.Holidays.FirstOrDefault().StartDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                @Html.DisplayNameFor(model => model.Holidays.FirstOrDefault().EndDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Status)
+                Days
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Type)
+                @Html.DisplayNameFor(model => model.Holidays.FirstOrDefault().Status)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ModifiedDate)
+                @Html.DisplayNameFor(model => model.Holidays.FirstOrDefault().Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holidays.FirstOrDefault().ModifiedDate)
+            </th>
+            <th>
+                Approver
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModifiedDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.HolidayRequestId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.HolidayRequestId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.HolidayRequestId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Holidays)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @((@item.EndDate - item.StartDate).TotalDays + 1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModifiedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Approver.FullName)
+                </td>
+                <td>
+                    @if (item.Status == Constants.Status.Pending)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.HolidayRequestId" data-toggle="tooltip" title="Edit"><i class="fas fa-edit color-dark"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.HolidayRequestId" data-toggle="tooltip" title="Delete"><i class="fas fa-trash-alt color-dark"></i></a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

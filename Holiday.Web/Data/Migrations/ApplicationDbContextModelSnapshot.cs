@@ -68,8 +68,8 @@ namespace Holiday.Web.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CurentYearHolidaysNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CurentYearHolidaysNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("Department")
                         .HasColumnType("nvarchar(max)");
