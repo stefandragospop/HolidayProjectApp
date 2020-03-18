@@ -9,22 +9,27 @@ namespace Holiday.Web.Services
 {
     public static class HolidayRequestService
     {
-        public static HolidayPageViewModel GetHolidayViewModel(List<HolidayRequest> holidays)
+        public static async Task<HolidayPageViewModel> GetHolidayViewModel(List<HolidayRequest> holidays)
         {
             var holidayPageViewModel = new HolidayPageViewModel();
             double totalNoOfDaysTaken = 0;
             foreach (var holiday in holidays)
             {
-                totalNoOfDaysTaken += (holiday.EndDate - holiday.StartDate).TotalDays + 1;
+                totalNoOfDaysTaken += CaltulateDaysBetweenTwoDates(holiday.EndDate, holiday.StartDate);
             }
 
-          
+
             holidayPageViewModel.EmloyeeFullName = holidays.FirstOrDefault().Employee.FullName;
             holidayPageViewModel.EmployeeTotalNoOfDays = holidays.FirstOrDefault().Employee.CurentYearHolidaysNumber.HasValue ? holidays.FirstOrDefault().Employee.CurentYearHolidaysNumber.Value : 0;
             holidayPageViewModel.EmployeeTotalDaysLeft = holidayPageViewModel.EmployeeTotalNoOfDays.Value - (int)totalNoOfDaysTaken;
             holidayPageViewModel.Holidays = holidays;
             return holidayPageViewModel;
 
+        }
+
+        public static double CaltulateDaysBetweenTwoDates(DateTime endDate, DateTime startDate)
+        {
+            return (endDate - startDate).TotalDays + 1;
         }
     }
 }

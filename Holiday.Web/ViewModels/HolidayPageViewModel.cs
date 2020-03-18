@@ -12,9 +12,9 @@ namespace Holiday.Web.ViewModels
         }
         [Display(Name = "Name")]
         public string EmloyeeFullName { get; set; }
-        [Display(Name = "Current Year Total Days")]
+        [Display(Name = "Current Year Holidays")]
         public int? EmployeeTotalNoOfDays { get; set; }
-        [Display(Name = "Days left")]
+        [Display(Name = "Holidays left")]
         public int EmployeeTotalDaysLeft { get; set; }
         public List<HolidayRequest> Holidays { get; set; }
     }

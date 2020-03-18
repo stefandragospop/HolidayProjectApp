@@ -3,35 +3,24 @@
 @{
     ViewData["Title"] = "My Holidays";
 }
-<div class="row">
-    <h5>My Holidays</h5>
-    <a class="pad-left-10 color-dark" asp-action="Create" data-toggle="tooltip" title="Create"><i class="fas fa-plus-circle"></i></a>
-</div>
+    <div class="row">
+        <h5>My Holidays</h5>
+        @if (Model.EmployeeTotalDaysLeft > 0)
+        {
+            <a class="pad-left-10 color-dark" asp-action="Create" data-toggle="tooltip" title="Create"><i class="fas fa-plus-circle"></i></a>
+        }
+    </div>
 <br />
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-4 text-center">
         @Html.DisplayNameFor(model => model.EmloyeeFullName): <b>@Html.DisplayFor(model => model.EmloyeeFullName)</b>
     </div>
-    <div class="col-sm-3 text-center">
+    <div class="col-sm-4 text-center">
         @Html.DisplayNameFor(model => model.EmployeeTotalNoOfDays):<b> @Html.DisplayFor(model => model.EmployeeTotalNoOfDays)</b>
     </div>
     <div class="col-sm-3 text-center">
-        @if (Model.EmployeeTotalDaysLeft > 0)
-        {
-            @Html.DisplayNameFor(model => model.EmployeeTotalDaysLeft)<text>:</text><b> @Html.DisplayFor(model => model.EmployeeTotalDaysLeft)</b>
-        }
-        else
-        {
-            @Html.DisplayNameFor(model => model.EmployeeTotalDaysLeft)<text>:</text><b> 0</b>
-        }
+        @Html.DisplayNameFor(model => model.EmployeeTotalDaysLeft)<text>:</text><b> @Html.DisplayFor(model => model.EmployeeTotalDaysLeft)</b>
     </div>
-    @if (Model.EmployeeTotalDaysLeft < 0)
-    {
-        <div class="col-sm-3 text-center">
-
-            <text>Days In Advance: </text><b>@(Model.EmployeeTotalDaysLeft * -1)</b>
-        </div>
-    }
 </div>
 
 <br />
