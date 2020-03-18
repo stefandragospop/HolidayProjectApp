@@ -21,6 +21,9 @@ namespace Holiday.Web.Models
         [Display(Name = "End Date")]
         public DateTime EndDate { get; set; }
 
+        [Display(Name = "Days")]
+        public int NoOfDays { get; set; }
+
         public Status Status { get; set; }
 
         [Required]

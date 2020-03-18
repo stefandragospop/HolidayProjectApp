@@ -3,13 +3,13 @@
 @{
     ViewData["Title"] = "My Holidays";
 }
-    <div class="row">
-        <h5>My Holidays</h5>
-        @if (Model.EmployeeTotalDaysLeft > 0)
-        {
-            <a class="pad-left-10 color-dark" asp-action="Create" data-toggle="tooltip" title="Create"><i class="fas fa-plus-circle"></i></a>
-        }
-    </div>
+<div class="row">
+    <h5>My Holidays</h5>
+    @if (Model.EmployeeTotalDaysLeft > 0)
+    {
+        <a class="pad-left-10 color-dark" asp-action="Create" data-toggle="tooltip" title="Create"><i class="fas fa-plus-circle"></i></a>
+    }
+</div>
 <br />
 <div class="row">
     <div class="col-sm-4 text-center">
@@ -25,29 +25,29 @@
 
 <br />
 
-<table class="table table-hover">
+<table class="table table-hover" id="holidaysTable">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Holidays.FirstOrDefault().StartDate)
+                @Html.ActionLink("Start Date", "Index", new { sortOrder = ViewBag.StartSortParam }, new { @class = "color-dark" })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Holidays.FirstOrDefault().EndDate)
+                @Html.ActionLink("End Date", "Index", new { sortOrder = ViewBag.EndSortParam }, new { @class = "color-dark" })
             </th>
             <th>
-                Days
+                @Html.ActionLink("Days", "Index", new { sortOrder = ViewBag.DaysSortParam }, new { @class = "color-dark" })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Holidays.FirstOrDefault().Status)
+                @Html.ActionLink("Status", "Index", new { sortOrder = ViewBag.TypeSortParam }, new { @class = "color-dark" })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Holidays.FirstOrDefault().Type)
+                @Html.ActionLink("Type", "Index", new { sortOrder = ViewBag.StatusSortParam }, new { @class = "color-dark" })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Holidays.FirstOrDefault().ModifiedDate)
+                @Html.ActionLink("Modified on", "Index", new { sortOrder = ViewBag.ModifiedOnSortParam }, new { @class = "color-dark" })
             </th>
             <th>
-                Approver
+                @Html.ActionLink("Approver", "Index", new { sortOrder = ViewBag.ApproverSortParam }, new { @class = "color-dark" })
             </th>
             <th></th>
         </tr>
@@ -63,7 +63,7 @@
                     @Html.DisplayFor(modelItem => item.EndDate)
                 </td>
                 <td>
-                    @((@item.EndDate - item.StartDate).TotalDays + 1)
+                    @Html.DisplayFor(modelItem => item.NoOfDays)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Status)

@@ -23,19 +23,79 @@ namespace Holiday.Web.Controllers
         }
 
         // GET: HolidayRequests
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            return View(await HolidayRequestService.GetHolidayViewModel(await GetUsersHolidays()));
+            ViewBag.StartSortParam = String.IsNullOrEmpty(sortOrder) ? "startDate" : "";
+            ViewBag.EndSortParam = sortOrder == "EndDate" ? "Enddate_desc" : "EndDate";
+            ViewBag.TypeSortParam = sortOrder == "Type" ? "Type_desc" : "Type";
+            ViewBag.StatusSortParam = sortOrder == "Status" ? "Status_desc" : "Status";
+            ViewBag.ModifiedOnSortParam = sortOrder == "ModifiedOn" ? "ModifiedOn_desc" : "ModifiedOn";
+            ViewBag.ApproverSortParam = sortOrder == "ModifiedOn" ? "ModifiedOn_desc" : "ModifiedOn";
+            ViewBag.DaysSortParam = sortOrder == "Days" ? "Days_desc" : "Days";
+
+            var holidaysViewModel = new HolidayPageViewModel();
+
+            holidaysViewModel.EmloyeeFullName = _context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefault().FullName;
+            holidaysViewModel.EmployeeTotalNoOfDays = _context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefault().CurentYearHolidaysNumber;
+            var holidays = await GetUsersHolidays();
+            holidaysViewModel.EmployeeTotalDaysLeft = holidaysViewModel.EmployeeTotalNoOfDays.Value - HolidayRequestService.SumOfEmployeeDays(holidays);
+            holidaysViewModel.Holidays = holidays;
+
+            switch (sortOrder)
+            {
+                case "startDate":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderBy(s => s.StartDate).ToList();
+                    break;
+                case "Enddate_desc":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderByDescending(s => s.EndDate).ToList();
+                    break;
+                case "EndDate":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderBy(s => s.EndDate).ToList();
+                    break;
+                case "Type_desc":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderByDescending(s => s.Type).ToList();
+                    break;
+                case "Type":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderBy(s => s.Type).ToList();
+                    break;
+                case "Status_desc":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderByDescending(s => s.Type).ToList();
+                    break;
+                case "Status":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderBy(s => s.Type).ToList();
+                    break;
+                case "ModifiedOn_desc":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderByDescending(s => s.ModifiedDate).ToList();
+                    break;
+                case "ModifiedOn":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderBy(s => s.ModifiedDate).ToList();
+                    break;
+                case "Approver_desc":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderByDescending(s => s.Approver.FullName).ToList();
+                    break;
+                case "Approver":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderBy(s => s.Approver.FullName).ToList();
+                    break;
+                case "Days_desc":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderByDescending(s => s.NoOfDays).ToList();
+                    break;
+                case "Days":
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderBy(s => s.NoOfDays).ToList();
+                    break;
+                default:
+                    holidaysViewModel.Holidays = holidaysViewModel.Holidays.OrderByDescending(s => s.StartDate).ToList();
+                    break;
+            }
+            return View(holidaysViewModel);
         }
 
 
         // GET: HolidayRequests/Create
         public async Task<IActionResult> Create()
         {
-            var holidaysViewModel = await HolidayRequestService.GetHolidayViewModel(await GetUsersHolidays());
-
             var createViewModel = new HolidayRequestCreateEditViewModel();
-            createViewModel.NoOfDaysLeft = holidaysViewModel.EmployeeTotalDaysLeft;
+            var user = await _context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefaultAsync();
+            createViewModel.NoOfDaysLeft = user.CurentYearHolidaysNumber.Value - HolidayRequestService.SumOfEmployeeDays(await GetUsersHolidays());
             createViewModel.StartDate = DateTime.Now.Date;
             createViewModel.EndDate = DateTime.Now.Date;
 
@@ -49,7 +109,8 @@ namespace Holiday.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("HolidayRequestId,StartDate,EndDate,Type,NoOfDaysLeft")] HolidayRequestCreateEditViewModel holidayRequest)
         {
-            if ((holidayRequest.EndDate - holidayRequest.StartDate).TotalDays + 1 > holidayRequest.NoOfDaysLeft)
+            if (HolidayRequestService.CaltulateDaysBetweenTwoDates(holidayRequest.EndDate, holidayRequest.StartDate) >
+                (holidayRequest.NoOfDaysLeft))
             {
                 ModelState.AddModelError(string.Empty, "Number of Holidays requested is bigger than available days.");
             }
@@ -62,6 +123,7 @@ namespace Holiday.Web.Controllers
                 dbHolidayRequest.StartDate = holidayRequest.StartDate;
                 dbHolidayRequest.EndDate = holidayRequest.EndDate;
                 dbHolidayRequest.Type = holidayRequest.Type;
+                dbHolidayRequest.NoOfDays = HolidayRequestService.CaltulateDaysBetweenTwoDates(holidayRequest.EndDate, holidayRequest.StartDate);
                 _context.Add(dbHolidayRequest);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -87,15 +149,15 @@ namespace Holiday.Web.Controllers
                 return NotFound();
             }
 
-            var holidaysViewModel = HolidayRequestService.GetHolidayViewModel(GetUsersHolidays().Result).Result;
-
+            var user = await _context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefaultAsync();
             var editViewModel = new HolidayRequestCreateEditViewModel();
-            editViewModel.NoOfDaysLeft = holidaysViewModel.EmployeeTotalDaysLeft;
+
+            editViewModel.NoOfDaysLeft = user.CurentYearHolidaysNumber.Value - HolidayRequestService.SumOfEmployeeDays(await GetUsersHolidays());
             editViewModel.HolidayRequestId = holidayRequest.HolidayRequestId;
             editViewModel.StartDate = holidayRequest.StartDate;
             editViewModel.EndDate = holidayRequest.EndDate;
-            editViewModel.Type = holidayRequest.Type;
-            
+            editViewModel.Days = holidayRequest.NoOfDays;
+
             return View(editViewModel);
         }
 
@@ -113,9 +175,10 @@ namespace Holiday.Web.Controllers
 
             var currentHoliday = await _context.HolidayRequests.Where(x => x.HolidayRequestId == id).FirstOrDefaultAsync();
             if (HolidayRequestService.CaltulateDaysBetweenTwoDates(holidayRequest.EndDate, holidayRequest.StartDate) >
-                (holidayRequest.NoOfDaysLeft + HolidayRequestService.CaltulateDaysBetweenTwoDates(currentHoliday.EndDate, currentHoliday.StartDate)))
+                (holidayRequest.NoOfDaysLeft + currentHoliday.NoOfDays))
             {
                 ModelState.AddModelError(string.Empty, "Number of Holidays requested is bigger than available days.");
+                holidayRequest.Days = HolidayRequestService.CaltulateDaysBetweenTwoDates(holidayRequest.EndDate, holidayRequest.StartDate);
             }
             if (ModelState.IsValid)
             {
@@ -126,6 +189,7 @@ namespace Holiday.Web.Controllers
                     currentHoliday.StartDate = holidayRequest.StartDate;
                     currentHoliday.EndDate = holidayRequest.EndDate;
                     currentHoliday.Type = holidayRequest.Type;
+                    currentHoliday.NoOfDays = HolidayRequestService.CaltulateDaysBetweenTwoDates(holidayRequest.EndDate, holidayRequest.StartDate);
                     _context.Update(currentHoliday);
                     await _context.SaveChangesAsync();
                 }
@@ -186,5 +250,7 @@ namespace Holiday.Web.Controllers
         {
             return await _context.HolidayRequests.Include(x => x.Employee).Where(x => x.Employee.Email == User.Identity.Name).ToListAsync();
         }
+
+
     }
 }

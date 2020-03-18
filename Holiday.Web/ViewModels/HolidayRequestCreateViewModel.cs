@@ -21,6 +21,10 @@ namespace Holiday.Web.ViewModels
         public DateTime EndDate { get; set; }
 
         [Required]
+        [Display(Name = "Days")]
+        public int Days { get; set; }
+
+        [Required]
         public Constants.Type Type { get; set; }
         [Display(Name = "Days Left")]
         public int NoOfDaysLeft { get; set; }
