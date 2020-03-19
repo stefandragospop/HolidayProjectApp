@@ -25,5 +25,7 @@ namespace Holiday.Web.Models
             BloodDonation,
             Legal
         }
+
+        public static int DefaultNumberOfHolidaysPerYear { get; set; } = 21;
     }
 }
