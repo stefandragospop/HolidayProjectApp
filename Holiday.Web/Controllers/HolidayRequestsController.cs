@@ -38,7 +38,15 @@ namespace Holiday.Web.Controllers
             holidaysViewModel.EmloyeeFullName = _context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefault().FullName;
             holidaysViewModel.EmployeeTotalNoOfDays = _context.Users.Where(x => x.Email == User.Identity.Name).FirstOrDefault().CurentYearHolidaysNumber;
             var holidays = await GetUsersHolidays();
-            holidaysViewModel.EmployeeTotalDaysLeft = holidaysViewModel.EmployeeTotalNoOfDays.Value - HolidayRequestService.SumOfEmployeeDays(holidays);
+            if (holidaysViewModel.EmployeeTotalNoOfDays != null) 
+            {
+                holidaysViewModel.EmployeeTotalDaysLeft = holidaysViewModel.EmployeeTotalNoOfDays.Value - HolidayRequestService.SumOfEmployeeDays(holidays);
+            }
+            else
+            {
+                holidaysViewModel.EmployeeTotalDaysLeft = 0;
+            }
+           
             holidaysViewModel.Holidays = holidays;
 
             switch (sortOrder)
