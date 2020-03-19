@@ -109,10 +109,15 @@ namespace Holiday.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("HolidayRequestId,StartDate,EndDate,Type,NoOfDaysLeft")] HolidayRequestCreateEditViewModel holidayRequest)
         {
-            if (HolidayRequestService.CaltulateDaysBetweenTwoDates(holidayRequest.EndDate, holidayRequest.StartDate) >
+            if (HolidayRequestService.CaltulateDaysBetweenTwoDates(holidayRequest.StartDate, holidayRequest.EndDate) >
                 (holidayRequest.NoOfDaysLeft))
             {
                 ModelState.AddModelError(string.Empty, "Number of Holidays requested is bigger than available days.");
+            }
+            var usersHolidays = await GetUsersHolidays();
+            if (HolidayRequestService.CheckIfUserHasHolidayRequestInPeriod(usersHolidays, holidayRequest.StartDate, holidayRequest.EndDate))
+            {
+                ModelState.AddModelError(string.Empty, $"There are holidays between {holidayRequest.StartDate.ToString("dd.MM.yyyy")} and {holidayRequest.EndDate.ToString("dd.MM.yyyy")}. Please re-enter");
             }
             if (ModelState.IsValid)
             {
@@ -179,6 +184,11 @@ namespace Holiday.Web.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Number of Holidays requested is bigger than available days.");
                 holidayRequest.Days = HolidayRequestService.CaltulateDaysBetweenTwoDates(holidayRequest.EndDate, holidayRequest.StartDate);
+            }
+            var usersHolidays = await GetUsersHolidays();
+            if (HolidayRequestService.CheckIfUserHasHolidayRequestInPeriod(usersHolidays, holidayRequest.StartDate, holidayRequest.EndDate))
+            {
+                ModelState.AddModelError(string.Empty, $"There are holidays between {holidayRequest.StartDate.ToString("dd.MM.yyyy")} and {holidayRequest.EndDate.ToString("dd.MM.yyyy")}. Please re-enter");
             }
             if (ModelState.IsValid)
             {

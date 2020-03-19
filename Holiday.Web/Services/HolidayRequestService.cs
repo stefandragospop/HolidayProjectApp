@@ -23,5 +23,17 @@ namespace Holiday.Web.Services
             }
             return (int)totalNoOfDaysTaken;
         }
+
+        public static bool CheckIfUserHasHolidayRequestInPeriod(List<HolidayRequest> list, DateTime startdate, DateTime enddate)
+        {
+            foreach (var item in list)
+            {
+                if (item.StartDate == startdate)
+                    return true;
+                if (item.EndDate == enddate)
+                    return true;
+            }
+            return false;
+        }
     }
 }
