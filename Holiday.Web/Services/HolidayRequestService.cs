@@ -9,17 +9,13 @@ namespace Holiday.Web.Services
 {
     public static class HolidayRequestService
     {
-        public static int CaltulateDaysBetweenTwoDates(DateTime endDate, DateTime startDate)
-        {
-            return (int)(endDate - startDate).TotalDays + 1;
-        }
 
         public static int SumOfEmployeeDays(List<HolidayRequest> list)
         {
             double totalNoOfDaysTaken = 0;
             foreach (var holiday in list)
             {
-                totalNoOfDaysTaken += HolidayRequestService.CaltulateDaysBetweenTwoDates(holiday.EndDate, holiday.StartDate);
+                totalNoOfDaysTaken += GetNumberOfWorkingDays(holiday.StartDate, holiday.EndDate);
             }
             return (int)totalNoOfDaysTaken;
         }
@@ -34,6 +30,20 @@ namespace Holiday.Web.Services
                     return true;
             }
             return false;
+        }
+
+        public static int GetNumberOfWorkingDays(DateTime startDate, DateTime endDate)
+        {
+            int days = 0;
+            while (startDate <= endDate)
+            {
+                if (startDate.DayOfWeek != DayOfWeek.Saturday && startDate.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    ++days;
+                }
+                startDate = startDate.AddDays(1);
+            }
+            return days;
         }
     }
 }

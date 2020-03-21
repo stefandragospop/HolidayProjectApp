@@ -12,7 +12,7 @@ namespace Holiday.Web.Models
         {
 
             Pending,
-            Approved,
+            Accepted,
             Declined
         }
 

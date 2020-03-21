@@ -1,0 +1,50 @@
+﻿@model Holiday.Web.ViewModels.UserViewModel
+
+@{
+    ViewData["Title"] = "Employees";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Employees</h1>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.ActionLink("Full Name", "Index", new { sortOrder = ViewBag.FullNameSortParam }, new { @class = "color-dark" })
+            </th>
+            <th>
+                @Html.ActionLink("Department", "Index", new { sortOrder = ViewBag.DepSortParam }, new { @class = "color-dark" })
+            </th>
+            <th>
+                @Html.ActionLink("Current Year Holidays", "Index", new { sortOrder = ViewBag.CYHNSortParam }, new { @class = "color-dark" })
+            </th>
+            <th>
+               Is Admin?
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Users)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Department)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CurentYearHolidaysNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsAdmin)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" data-toggle="tooltip" title="Edit"><i class="fas fa-edit color-dark"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

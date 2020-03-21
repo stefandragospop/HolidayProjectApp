@@ -14,23 +14,26 @@ namespace Holiday.Web.Models
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Start Date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime StartDate { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "End Date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime EndDate { get; set; }
 
         [Display(Name = "Days")]
         public int NoOfDays { get; set; }
 
-        public Status Status { get; set; }
+        public Constants.Status Status { get; set; }
 
         [Required]
         public Constants.Type Type { get; set; }
 
         [DataType(DataType.Date)]
         [Display(Name = "Modified on")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime ModifiedDate { get; set; }
 
         [Display(Name = "Approver")]

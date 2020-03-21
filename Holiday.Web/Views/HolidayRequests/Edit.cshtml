@@ -1,7 +1,7 @@
 ﻿@model Holiday.Web.ViewModels.HolidayRequestCreateEditViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Holydai";
 }
 
 <h5>Modify Holiday Request</h5>
@@ -14,34 +14,36 @@
 </div>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-7">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="HolidayRequestId" />
             <input type="hidden" asp-for="NoOfDaysLeft" />
-            <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
-                <span asp-validation-for="StartDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Days" class="control-label"></label>
-                <input asp-for="Days" class="form-control" disabled/>
-                <span asp-validation-for="Days" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Type" class="control-label"></label>
-                <select class="form-control" asp-for="@Model.Type" asp-items="Html.GetEnumSelectList<Holiday.Web.Models.Constants.Type>()"></select>
-                <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary btn-sm" /> | <a class="color-dark" asp-action="Index" data-toggle="tooltip" title="Back to List"><i class="fas fa-arrow-circle-left"></i></a>
-            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="StartDate" class="control-label"></label>
+                    <input asp-for="StartDate" class="form-control" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EndDate" class="control-label"></label>
+                    <input asp-for="EndDate" class="form-control" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Days" class="control-label"></label>
+                    <input asp-for="Days" class="form-control" disabled />
+                    <span asp-validation-for="Days" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Type" class="control-label"></label>
+                    <select class="form-control" asp-for="@Model.Type" asp-items="Html.GetEnumSelectList<Holiday.Web.Models.Constants.Type>()"></select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary btn-sm" /> | <a class="color-dark" asp-action="Index" data-toggle="tooltip" title="Back to List"><i class="fas fa-arrow-circle-left"></i></a>
+                </div>
+                </div>
         </form>
     </div>
 </div>
