@@ -2,15 +2,23 @@
 
 @{
     ViewData["Title"] = "My Holidays";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <div class="row">
-    <h5>My Holidays</h5>
-    @if (Model.EmployeeTotalDaysLeft > 0)
-    {
-        <a class="pad-left-10 color-dark" asp-action="Create" data-toggle="tooltip" title="Create"><i class="fas fa-plus-circle"></i></a>
-    }
+    <div class="col-sm-6 row">
+        <h5>My Holidays</h5>
+        @if (Model.EmployeeTotalDaysLeft > 0)
+        {
+            <a class="pad-left-10 color-dark" asp-action="Create" data-toggle="tooltip" title="Create"><i class="fas fa-plus-circle"></i></a>
+        }
+    </div>
+    <div class="col-sm-6">
+        <input type="text" class="float-right" id="input" onkeyup="FilterTable(this, 'holidaysTablebody')" placeholder="Smart Search.." />
+    </div>
 </div>
-<br />
+<hr />
+
 <div class="row">
     <div class="col-sm-4 text-center">
         @Html.DisplayNameFor(model => model.EmloyeeFullName): <b>@Html.DisplayFor(model => model.EmloyeeFullName)</b>
@@ -52,7 +60,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="holidaysTablebody">
         @foreach (var item in Model.Holidays)
         {
             <tr>

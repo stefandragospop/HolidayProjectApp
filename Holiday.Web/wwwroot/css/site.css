@@ -87,9 +87,12 @@ body {
 }
 
 
-.edit-checkbox{
+.edit-checkbox {
     transform: scale(1.5);
-    margin-right : 15px;
-    margin-left : 2px;
+    margin-right: 15px;
+    margin-left: 2px;
+}
 
+.float-content-rigth {
+    float: right
 }
