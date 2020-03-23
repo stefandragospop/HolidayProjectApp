@@ -1,7 +1,7 @@
 # Holiday App
 Hello, my name is Dragos and togheter with my finace, Manuela, we developed and tested a Holidays application for a company.
-We started from a specification document, then using Trello for a better tracking of our work, we created User stories, and tickets for
-what we have to do.
+
+Manuela created a specification document, then togheter we created tickets for what we have to do using Trello for a better understanding of Scrum way of work. 
 
 We created a Holiday.App solution, where I developed a Web project in ASP.NET Core MVC and Manuela developed Test proect for automation
 testing using Selenium Web Driver.
